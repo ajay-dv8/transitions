@@ -1,43 +1,143 @@
-import React from 'react'
+"use client";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isLooping, setIsLooping] = useState(false);
+  
+  // Store the ticker function reference for proper cleanup
+  const tickerFunctionRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // STEP 1: Define the loop parameters
+    let direction = 1; // 1 for forward, -1 for backward
+    let loopStart = 0; // Will be set when video ends
+    let loopEnd = 0;   // Will be set when video ends
+    
+    // STEP 2: Create the ticker function that will handle the back-and-forth loop
+    const createTickerFunction = () => {
+      return () => {
+        // Only run if we're in looping mode and video exists
+        if (!isLooping || !video) return;
+        
+        // STEP 3: Calculate the time increment (60fps = ~0.016 seconds per frame)
+        const timeIncrement = 0.016;
+        
+        // STEP 4: Update video time based on direction
+        video.currentTime += timeIncrement * direction;
+        
+        // STEP 5: Check boundaries and reverse direction when needed
+        if (direction === 1 && video.currentTime >= loopEnd) {
+          // Hit the end, reverse to go backward
+          direction = -1;
+          video.currentTime = loopEnd; // Clamp to exact end
+        } else if (direction === -1 && video.currentTime <= loopStart) {
+          // Hit the start, reverse to go forward
+          direction = 1;
+          video.currentTime = loopStart; // Clamp to exact start
+        }
+      };
+    };
+
+    // STEP 6: Handle when the video ends (plays completely for the first time)
+    const handleVideoEnd = () => {
+      console.log("Video ended, starting loop");
+      
+      // Set up loop boundaries (last 1 second of video)
+      loopEnd = video.duration;           // End of video
+      loopStart = video.duration - 2;     // 1 second before end
+      
+      // Ensure we don't go below 0
+      if (loopStart < 0) loopStart = 0;
+      
+      // STEP 7: Position video at the start of loop section
+      video.currentTime = loopStart;
+      
+      // STEP 8: Enable looping state
+      setIsLooping(true);
+      
+      // STEP 9: Create and add the ticker function
+      tickerFunctionRef.current = createTickerFunction();
+      gsap.ticker.add(tickerFunctionRef.current);
+      
+      console.log(`Loop setup: start=${loopStart}s, end=${loopEnd}s`);
+    };
+
+    // STEP 10: Add event listener for video end
+    video.addEventListener("ended", handleVideoEnd);
+
+    // STEP 11: Cleanup function
+    return () => {
+      // Remove event listener
+      video.removeEventListener("ended", handleVideoEnd);
+      
+      // Remove ticker function if it exists
+      if (tickerFunctionRef.current) {
+        gsap.ticker.remove(tickerFunctionRef.current);
+        tickerFunctionRef.current = null;
+      }
+    };
+  }, []); // Remove isLooping dependency to prevent re-running
+
+  // STEP 12: Additional cleanup when component unmounts or isLooping changes
+  useEffect(() => {
+    return () => {
+      if (tickerFunctionRef.current) {
+        gsap.ticker.remove(tickerFunctionRef.current);
+        tickerFunctionRef.current = null;
+      }
+    };
+  }, []);
+
   return (
-    <div className='relative flex flex-col justify-center w-full h-screen overflow-hidden'>
+    <div className="relative flex flex-col justify-center items-center w-full h-screen overflow-hidden">
+      {/* STEP 13: Video element with proper event handling */}
       <video
+        ref={videoRef}
         autoPlay
-        // loop
         muted
         playsInline
-        className='absolute w-full h-full object-fit'
+        // Remove onEnded handler since we handle it in useEffect
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70%] h-auto object-cover rounded-lg"
       >
-        <source src="/videos/bloom.webm" type="video/webm" />
+        <source src="/videos/bloomNew.mp4" type="video/mp4" />
       </video>
-      
+
       {/* Overlay to ensure text visibility */}
-      {/* <div className='absolute inset-0 bg-black/10' /> */}
-      
+      <div className='absolute inset-0 bg-radial-[at_50%_45%] from-transparent via-[#0E1A1C] to-[#040B09] to-90%'/>
+
       {/* Content container */}
-      <div className='relative z-10 mt-98 text-white px-4 md:px-20 flex flex-col flex-start'>
+      <div className="relative z-10 justify-center items-center text-white px-4 md:px-20 flex flex-col">
         {/* Title and sub title */}
-        <span className="">
-          <h1 className='text-6xl md:text-9xl mb-4 tracking-wider'>Transitions</h1>
-          <p className='text-xl md:text-2xl font-light max-w-2xl'>
+        <span className="flex justify-center flex-col items-center">
+          <h1 className="text-6xl text-gradient-to-br from-purple-700 to-purple-500 md:text-9xl mb-4 tracking-wider">
+            Transitions
+          </h1>
+          <p className="text-xl md:text-2xl text-center text-gray-300 font-light max-w-xl">
             Guiding you through life&apos;s most delicate transitions with grace and dignity
           </p>
         </span>
 
         {/* CTA Buttons */}
         <div className="my-8 flex gap-10 font-semibold mt-10">
-          <button className='bg-purple-700 hover:bg-purple-500 w-fit px-8 py-3 transition-colors duration-700 ease-in-out'>
+          <button className="bg-purple-700 hover:bg-purple-500 w-fit px-10 py-3 transition-colors duration-700 ease-in-out">
             Get Quote
           </button>
-          <button className='border hover:bg-purple-500 border-purple-600 w-fit px-8 py-3 transition-colors duration-700 ease-in-out'>
-            Contact
-          </button>
         </div>
+
+        {/* Debug info (remove in production) */}
+        {isLooping && (
+          <div className="mt-4 text-sm text-gray-400">
+            Loop active - Last second playing back and forth
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
 
@@ -48,12 +148,209 @@ export default function Hero() {
 
 
 
-// import React from 'react'
+
+
+// "use client";
+
+// import { useEffect, useRef } from "react";
+// import gsap from "gsap";
 
 // export default function Hero() {
-//   return (
-//     <div className='flex flex-col items-center justify-center w-full h-screen bg-gradient-to-br from-[#3b3c36] to-[#002147]'>
+//   const videoRef = useRef<HTMLVideoElement>(null);
+//   // Using refs instead of state for values that don't need re-renders
+//   const isLoopingRef = useRef(false);
+//   const directionRef = useRef(1); // 1 = forward, -1 = backward
+//   const animationRef = useRef<(() => void) | null>(null); // To store our GSAP animation callback
 
+//   useEffect(() => {
+//     const video = videoRef.current;
+//     if (!video) return;
+
+//     // Create the looping animation function
+//     const createLoopAnimation = () => {
+//       // Clear any existing animation to prevent duplicates
+//       if (animationRef.current) {
+//         gsap.ticker.remove(animationRef.current);
+//       }
+
+//       // Define our frame-by-frame animation
+//       const loopAnimation = () => {
+//         if (!isLoopingRef.current || !video) return;
+
+//         // Calculate time adjustment based on direction (60fps frame timing)
+//         const frameTime = 0.016 * directionRef.current;
+//         video.currentTime = Math.max(
+//           0,
+//           Math.min(video.duration, video.currentTime + frameTime)
+//         );
+
+//         // Check if we need to reverse direction at boundaries
+//         if (video.currentTime >= video.duration) {
+//           // Reached end: reverse to go backward
+//           directionRef.current = -1;
+//           video.currentTime = video.duration;
+//         } else if (video.currentTime <= video.duration - 1) {
+//           // Reached start of loop segment: reverse to go forward
+//           directionRef.current = 1;
+//           video.currentTime = video.duration - 1;
+//         }
+//       };
+
+//       // Store for cleanup and add to GSAP's ticker
+//       animationRef.current = loopAnimation;
+//       gsap.ticker.add(loopAnimation);
+//     };
+
+//     const handleVideoEnd = () => {
+//       // Enable looping mode
+//       isLoopingRef.current = true;
+
+//       // Set initial looping position (last second)
+//       const loopStart = video.duration - 1;
+//       video.currentTime = video.duration; // Start at end
+//       directionRef.current = -1; // Start by going backward
+
+//       // Create and start the animation
+//       createLoopAnimation();
+//     };
+
+//     video.addEventListener("ended", handleVideoEnd);
+
+//     return () => {
+//       video.removeEventListener("ended", handleVideoEnd);
+//       // Clean up GSAP animation
+//       if (animationRef.current) {
+//         gsap.ticker.remove(animationRef.current);
+//       }
+//     };
+//   }, []); // Empty dependency array = runs once on mount
+
+//   return (
+//     <div className="relative flex flex-col justify-center items-center w-full h-screen overflow-hidden">
+//       <video
+//         ref={videoRef}
+//         autoPlay
+//         muted
+//         playsInline
+//         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70%] h-auto object-cover rounded-lg"
+//       >
+//         <source src="/videos/bloomNew.mp4" type="video/mp4" />
+//       </video>
+
+//       {/* ... rest of your JSX remains unchanged ... */}
+//       {/* Overlay to ensure text visibili */}
+//       <div className="absolute inset-0 bg-radial-[at_50%_45%] from-transparent via-[#0E1A1C] to-[#040B09] to-90%" />
+//       {/* Content container */}
+//       <div className="relative z-10 justify-center items-center text-white px-4 md:px-20 flex flex-col ">
+//         {/* Title and sub title */}
+//         <span className="flex justify-center flex-col items-center">
+//           <h1 className="text-6xl text-gradient-to-br from-purple-700 to-purple-500 md:text-9xl mb-4 tracking-wider">
+//             Transitions
+//           </h1>
+//           <p className="text-xl md:text-2xl text-center text-gray-300 font-light max-w-xl">
+//             Guiding you through life&apos;s most delicate transitions with grace
+//             and dignity
+//           </p>
+//         </span>
+
+//         {/* CTA Buttons */}
+//         <div className="my-8 flex gap-10 font-semibold mt-10">
+//           <button className="bg-purple-700 hover:bg-purple-500 w-fit px-10 py-3 transition-colors duration-700 ease-in-out">
+//             Get Quote
+//           </button>
+//         </div>
+//       </div>
 //     </div>
-//   )
+//   );
+// }
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+// import gsap from "gsap";
+
+// export default function Hero() {
+
+//     const videoRef = useRef<HTMLVideoElement>(null);
+//   const [isLooping, setIsLooping] = useState(false);
+
+//   useEffect(() => {
+//     const video = videoRef.current;
+//     if (!video) return;
+
+//     const handleVideoEnd = () => {
+//       setIsLooping(true);
+//       video.pause();
+
+//       const loopStart = video.duration - 1;
+//       let direction = 1;
+
+//       gsap.ticker.add(() => {
+//         if (!isLooping || !video) return;
+
+//         video.currentTime += 0.016 * direction; // ~60fps
+//         if (video.currentTime >= video.duration) {
+//           direction = -1;
+//           video.currentTime = video.duration;
+//         }
+//         if (video.currentTime <= loopStart) {
+//           direction = 1;
+//           video.currentTime = loopStart;
+//         }
+//       });
+//     };
+
+//     video.addEventListener("ended", handleVideoEnd);
+
+//     return () => {
+//       video.removeEventListener("ended", handleVideoEnd);
+//       gsap.ticker.remove(() => {}); // Clean up
+//     };
+//   }, [isLooping]);
+
+//   return (
+//     <div className="relative flex flex-col justify-center items-center w-full h-screen overflow-hidden">
+//       <video
+//         ref={videoRef}
+//         autoPlay
+//         muted
+//         playsInline
+//         onEnded={(e) => e.preventDefault()}
+//         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70%] h-auto object-cover rounded-lg"
+//       >
+//         <source src="/videos/bloomNew.mp4" type="video/mp4" />
+//       </video>
+
+//       {/* Overlay to ensure text visibility */}
+//       <div className='absolute inset-0 bg-radial-[at_50%_45%] from-transparent via-[#0E1A1C] to-[#040B09] to-90%'/>
+
+//       {/* Content container */}
+//       <div className="relative z-10 justify-center items-center text-white px-4 md:px-20 flex flex-col ">
+//         {/* Title and sub title */}
+//         <span className="flex justify-center flex-col items-center">
+//           <h1 className="text-6xl text-gradient-to-br from-purple-700 to-purple-500 md:text-9xl mb-4 tracking-wider">
+//             Transitions
+//           </h1>
+//           <p className="text-xl md:text-2xl text-center text-gray-300 font-light max-w-xl">
+//             Guiding you through life&apos;s most delicate transitions with grace
+//             and dignity
+//           </p>
+//         </span>
+
+//         {/* CTA Buttons */}
+//         <div className="my-8 flex gap-10 font-semibold mt-10">
+//           <button className="bg-purple-700 hover:bg-purple-500 w-fit px-10 py-3 transition-colors duration-700 ease-in-out">
+//             Get Quote
+//           </button>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
 // }

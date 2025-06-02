@@ -10,7 +10,7 @@ const phrase = "Enterprise Funeral Services (EFSG) trading as Transitions is a f
 export default function About() {
 
   const refs = useRef<(HTMLSpanElement | null)[]>([]);
-  const body = useRef(null);
+  const bodyy = useRef(null);
   const container = useRef(null);
 
   useEffect( () => {
@@ -50,8 +50,8 @@ export default function About() {
   }
 
   return (
-    <main ref={container} className={styles.main}>
-      <div ref={body} className={styles.body}>
+    <main ref={container} className={`flex items-end justify-center h-[100vh] mb-[100vh] ${styles.main}`}>
+      <div ref={bodyy} className={`w-[90%] flex flex-wrap font-light ${styles.bodyy}`} style={{ opacity: 0 }}>
         {          // Split the phrase into words and then letters
           // and animate each letter
           splitWords(phrase)
