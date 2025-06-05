@@ -1,18 +1,26 @@
-// import { About } from "@/components/about";
-import About from "@/components/about";
+
+import { About } from "@/components/about";
+import Cta from "@/components/cta";
 import Footer from "@/components/footer";
 import Hero from "@/components/hero";
+import Services from "@/components/services";
+import Shop from "@/components/shop";
+// import { Testimonials } from "@/components/testimonials"; 
 import ZoomParallax from "@/components/zoomParallax";
 
 export default function Home() {
   return (
     <div className="">
-      <Hero />
+      <Hero /> 
       <About />
+      <Services />
       <div className={""}>
         <ZoomParallax />
       </div>
-      <Footer/>
+      <Shop />
+      <Cta/>
+      {/* <Testimonials /> */}
+      <Footer />
     </div>
   );
 }
