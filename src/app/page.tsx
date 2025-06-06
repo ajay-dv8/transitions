@@ -6,14 +6,13 @@ import Hero from "@/components/hero";
 import Services from "@/components/services";
 import Shop from "@/components/shop";
 import dynamic from 'next/dynamic';
+import ZoomParallax from "@/components/zoomParallax";
+// import Testimonials from "@/components/testimonials";
 
 const Testimonials = dynamic(
   () => import('@/components/testimonials'),
   { ssr: false }
 );
-// import Testimonials from "@/components/testimonials";
-import ZoomParallax from "@/components/zoomParallax";
-
 export default function Home() {
   return (
     <div className="">

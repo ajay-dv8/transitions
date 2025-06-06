@@ -20,7 +20,7 @@ export default function Cta() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              className="bg-white text-slate-900 hover:bg-slate-100 px-8"
+              className="bg-white text-slate-900 hover:bg-slate-300 px-8"
             >
               <Phone className="mr-2 h-5 w-5" />
               Call Now: (555) 123-4567
@@ -28,7 +28,7 @@ export default function Cta() {
             <Button
               size="lg"
               variant="outline"
-              className="border-slate-600 text-white hover:bg-slate-800 px-8"
+              className="border-slate-600 hover:bg-gray-300 text-white bg-slate-800 px-8"
             >
               <Clock className="mr-2 h-5 w-5" />
               Schedule Consultation
