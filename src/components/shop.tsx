@@ -85,6 +85,7 @@ export default function Shop() {
             </div>
           </header> */}
 
+          {/* Shop Section */}
           <div className="px-40 flex flex-1 justify-center py-5">
             <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
               <h2 className="text-[#131118] tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">Featured Items</h2>

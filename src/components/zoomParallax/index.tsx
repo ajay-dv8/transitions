@@ -77,7 +77,7 @@ export default function Index() {
                       muted
                       className="w-full h-full object-fill bg-[#eff1f5]"
                     />
-                    <div className="absolute flex gap-x-4 items-center justify-center bg-opacity-50 text-gray-800 text-xl">
+                    <div className="absolute flex flex-col md:flex-row gap-y-8 md:gap-x-4 items-center justify-center bg-opacity-50 text-gray-800 text-xl">
                       <ShoppingCart /> 
                         <h1 className="text-2xl font-bold underline">Shop</h1>
                       <ChevronDownIcon className="animate-bounce"/>
