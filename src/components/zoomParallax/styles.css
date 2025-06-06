@@ -1,6 +1,5 @@
-.container {
+.containerr {
   height: 200vh;
-  /* position: relative; */
   .sticky {
     position: sticky;
     overflow: hidden;

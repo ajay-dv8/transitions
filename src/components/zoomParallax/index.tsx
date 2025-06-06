@@ -10,6 +10,7 @@ import Picture7 from "../../../public/images/7.jpg";
 import Image, { StaticImageData } from "next/image";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 import { useRef } from "react"; 
+import { ChevronDownIcon, ShoppingCart } from "lucide-react";
 
 interface PictureProps {
   src: string | StaticImageData; // Updated to allow string for video src
@@ -61,14 +62,14 @@ export default function Index() {
   ];
 
   return (
-    <div ref={container} className={'container'}>
+    <div ref={container} className={'containerr w-full px-0 z-50'}>
       <div className="sticky">
         {pictures.map(({ src, scale }, index) => {
           return (
             <motion.div key={index} style={{ scale }} className={'el'}>
               <div className={'imageContainer'}>
                 {index === 0 ? (
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full h-full flex justify-center items-center">
                     <video
                       src="/videos/inf.mp4"
                       autoPlay
@@ -76,10 +77,11 @@ export default function Index() {
                       muted
                       className="w-full h-full object-fill bg-[#eff1f5]"
                     />
-                    {/* <div className="absolute bottom-4 right-4 bg-opacity-50 text-gray-800">
-                      We bring your ideas to life with cutting-edge technology and
-                      innovative solutions.
-                    </div> */}
+                    <div className="absolute flex gap-x-4 items-center justify-center bg-opacity-50 text-gray-800 text-xl">
+                      <ShoppingCart /> 
+                        <h1 className="text-2xl font-bold underline">Shop</h1>
+                      <ChevronDownIcon className="animate-bounce"/>
+                    </div>
                   </div>
                 ) : (
                   <Image 

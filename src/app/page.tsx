@@ -19,7 +19,7 @@ export default function Home() {
       <Hero /> 
       <About />
       <Services />
-      <div className={""}>
+      <div className={"w-full"}>
         <ZoomParallax />
       </div>
       <Shop />
