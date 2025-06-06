@@ -1,13 +1,13 @@
-// import SectionTitle from "./sectionTitle";
+import SectionTitle from "./sectionTitle";
 import { TextReveal } from "./ui/text-reveal";
 
 export function About() {
   return (
     <div className="bg-gradient-to-b from-slate-50 to-white pt-20">
-      {/* <SectionTitle
+      <SectionTitle
         topTitle="About"
         title="what to know about Transitions"
-      /> */}
+      />
       <TextReveal>
         Enterprise Funeral Services (EFSG) trading as Transitions is a full
         funeral service providing company with the aim of providing Everything
