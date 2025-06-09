@@ -170,9 +170,9 @@ export default function Component() {
               <motion.div key={index} variants={cardVariants}>
                 <Card className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-slate-300">
                   <CardHeader className="pb-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="p-3 bg-slate-100 rounded-lg group-hover:bg-slate-200 transition-colors">
-                        <IconComponent className="h-6 w-6 text-slate-700" />
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="p-2 rounded-lg group-hover:bg-slate-100 transition-colors">
+                        <IconComponent className="h-5 w-5 text-slate-700" />
                       </div>
                       <Badge variant="secondary" className="text-xs">
                         {service.badge}
@@ -183,7 +183,7 @@ export default function Component() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <CardDescription className="text-slate-600 mb-4 leading-relaxed">
+                    <CardDescription className="text-slate-600 mb-4 leading-relaxed text-sm">
                       {service.description}
                     </CardDescription>
                     <div className="space-y-2 mb-4">
@@ -203,7 +203,9 @@ export default function Component() {
               </motion.div>
             )
           })}
-        </motion.div>        {/* Additional Services */}
+        </motion.div>
+
+        {/* Additional Services */}
         <motion.div 
           ref={additionalRef}
           initial="hidden"
@@ -226,6 +228,8 @@ export default function Component() {
               with additional care and assistance.
             </motion.p>
           </div>
+
+          {/* Additional services */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {additionalServices.map((service, index) => (
               <motion.div 
