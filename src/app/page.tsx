@@ -6,8 +6,8 @@ import Hero from "@/components/hero";
 import Services from "@/components/services";
 import Shop from "@/components/shop";
 import dynamic from 'next/dynamic';
-import ZoomParallax from "@/components/zoomParallax";
-// import Testimonials from "@/components/testimonials";
+import ZoomParallax from "@/components/zoomParallax"; 
+import { Lenis } from "lenis/react";
 
 const Testimonials = dynamic(
   () => import('@/components/testimonials'),
@@ -16,6 +16,7 @@ const Testimonials = dynamic(
 export default function Home() {
   return (
     <div className="">
+      <Lenis root>
       <Hero /> 
       <About />
       <Services />
@@ -26,6 +27,7 @@ export default function Home() {
       <Cta/>
       <Testimonials />
       <Footer />
+      </Lenis>
     </div>
   );
 }
